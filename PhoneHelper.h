@@ -1,12 +1,17 @@
 #ifndef PHONEHELPER
 #define PHONEHELPER
 #include "Logging.h"
-#include <string>
+#include "OptionParser.h"
+
 class PhoneHelper{
+    PhoneHelperOptions options;
     public:
+    PhoneHelper(const std::vector<std::string>& options){
+        this->options = OptionParser::parse(options);
+    }
     std::string runCommand(const std::string& command);
     void start();
-    int getDevices();
+    int getDeviceCount(bool silent = false);
     std::string getIp();
 };
 #endif
