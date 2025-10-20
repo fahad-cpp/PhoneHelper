@@ -25,18 +25,8 @@ void PhoneHelper::start(){
 
     // Find WLAN ip address
     std::string ip = getIp();
-    if(!options.forceWireless && !options.forceUSB){
-        LOG_INFO("Device not on the same network, connecting via USB\n"
-            "Use PhoneHelper with --wireless option to keep waiting until connection\n"
-            "Or try again with same network connection\n");
-    }
-    if((!options.forceWireless && (ip.length() == 0)) || options.forceUSB){
-        LOG_INFO("scrcpy started\n");
-        system("scrcpy -d -m1920 >nul 2>nul");
-        LOG_INFO("scrcpy exited\n");
-        return;
-    }
-    while(ip.length() == 0){
+
+    while((ip.length() == 0) && options.forceWireless){
         LOG_INFO("Device not in the same network\n");
         LOG_INFO("Connect the device to your network , and press enter to try again\n");
         std::cin.get();
@@ -44,23 +34,32 @@ void PhoneHelper::start(){
     }
 
     // Connect to the device wirelessly
-    std::string command = "adb connect " + ip;
-    std::string output = runCommand(command.c_str());
-    if(output.find("connected to") == std::string::npos){
-        LOG_INFO("Failed to connect to the device with IP address:"<<ip<<"\n");
-        return;
+    if(ip.length()){
+        std::string command = "adb connect " + ip;
+        std::string output = runCommand(command.c_str());
+        if(output.find("connected to") == std::string::npos){
+            LOG_INFO("Failed to connect to the device with IP address:"<<ip<<"\n");
+            return;
+        }
+        LOG_INFO("Successfully connected to "<<ip<<"\n");
+        LOG_INFO("You can now safely remove the USB\n");
     }
-    LOG_INFO("Successfully connected to "<<ip<<"\n");
-    LOG_INFO("You can now safely remove the USB\n");
 
+    //start scrcpy
     LOG_INFO("scrcpy started\n");
-    system("scrcpy --tcpip -e -m1920 >nul 2>nul");
+    startscrcpy();
     LOG_INFO("scrcpy exited\n");
     
 }
+bool PhoneHelper::startscrcpy(){
+    std::string command = "scrcpy";
+    command += OptionParser::optionString(this->options);
+    command += " >nul 2>nul";
+    system(command.c_str());
+}
 std::string PhoneHelper::getIp(){
     std::string ipline = runCommand("adb shell ip addr show wlan0 2>nul | find \"inet \"");
-    if(ipline.length() == 0){
+    if(ipline.length() == 0 || (ipline.find("inet ") == std::string::npos)){
         return "";
     }
     size_t length = ipline.length();

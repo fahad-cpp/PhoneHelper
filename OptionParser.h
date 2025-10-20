@@ -5,5 +5,6 @@
 
 namespace OptionParser{
     PhoneHelperOptions parse(const std::vector<std::string>& _options);
+    std::string optionString(const PhoneHelperOptions& _options);
 };
 #endif

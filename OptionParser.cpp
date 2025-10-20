@@ -23,11 +23,18 @@ PhoneHelperOptions OptionParser::parse(const std::vector<std::string>& _options)
             //TODO : check for valid scrcpy options
             options.scrcpyOptions.push_back(option);
         }
-        if(options.forceWireless){
-            options.scrcpyOptions.push_back("-e");
-        }else if(options.forceUSB){
+        if(options.forceUSB){
             options.scrcpyOptions.push_back("-d");
+        }else{
+            options.scrcpyOptions.push_back("-e");
         }
 
         return options;
+    }
+    std::string OptionParser::optionString(const PhoneHelperOptions& _options){
+        std::string optStr;
+        for(std::string opt : _options.scrcpyOptions){
+            optStr += (" " + opt);
+        }
+        return optStr;
     }
