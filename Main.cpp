@@ -8,6 +8,5 @@ int main(int argc,char* argv[]){
         cmdoptions.push_back(std::string(argv[i]));
     }
     PhoneHelper phoneHelper(cmdoptions);
-    std::cin.get();
     phoneHelper.start();
 }
