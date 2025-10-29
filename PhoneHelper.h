@@ -12,7 +12,7 @@ class PhoneHelper{
     std::string runCommand(const std::string& command);
     void start();
     int getDeviceCount(bool silent = false);
-    bool startscrcpy();
+    void startscrcpy();
     std::string getIp();
 };
 #endif

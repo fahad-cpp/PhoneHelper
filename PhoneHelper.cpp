@@ -51,7 +51,7 @@ void PhoneHelper::start(){
     LOG_INFO("scrcpy exited\n");
     
 }
-bool PhoneHelper::startscrcpy(){
+void PhoneHelper::startscrcpy(){
     std::string command = "scrcpy";
     command += OptionParser::optionString(this->options);
     command += " >nul 2>nul";
