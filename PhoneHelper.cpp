@@ -54,7 +54,8 @@ void PhoneHelper::start(){
 void PhoneHelper::startscrcpy(){
     std::string command = "scrcpy";
     command += OptionParser::optionString(this->options);
-    command += " >nul 2>nul";
+    if(!options.verbose)
+        command += " >nul 2>nul";
     system(command.c_str());
 }
 std::string PhoneHelper::getIp(){

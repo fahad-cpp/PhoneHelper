@@ -19,14 +19,20 @@ PhoneHelperOptions OptionParser::parse(const std::vector<std::string>& _options)
                     options.forceWireless = false;
                 }
                 continue;
+            }else if(option == "--verbose" || option == "-v"){
+                LOG_INFO("Verbose output");
+                options.verbose = true;
+                continue;
             }
             //TODO : check for valid scrcpy options
             options.scrcpyOptions.push_back(option);
         }
-        if(options.forceUSB){
+        if(options.forceWireless){
+            options.scrcpyOptions.push_back("-e");
+        }else if(options.forceUSB){
             options.scrcpyOptions.push_back("-d");
         }else{
-            options.scrcpyOptions.push_back("-e");
+            options.forceWireless = true; //HACK: enable forceWireless by default to fix multiple devices
         }
 
         return options;
