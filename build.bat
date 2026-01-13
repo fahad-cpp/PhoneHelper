@@ -8,4 +8,4 @@ cmake .. -G "Visual Studio 17 2022" -A %ARCHITECTURE% > nul
 cmake --build . --config %CONFIG% 
 popd
 echo PROGRAM OUTPUT : 
-build\%CONFIG%\PhoneHelper.exe
+bin\%CONFIG%\PhoneHelper.exe
