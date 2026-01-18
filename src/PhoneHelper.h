@@ -14,6 +14,6 @@ class PhoneHelper{
     int getDeviceCount(bool silent = false,std::vector<std::string>* names = nullptr);
     void connectToIP(std::string& ip);
     void startscrcpy();
-    std::string getIp();
+    std::string getIp(std::string serial="");
 };
 #endif

@@ -10,11 +10,15 @@ currently it uses scrcpy as an external CLI tool but i will update the repo to i
 mkdir build
 cd build
 
-cmake ..
-cmake --build . --config Release -A x64 --parallel
+cmake .. -G "Visual Studio 17 2022" -DCMAKE_BUILD_TYPE=Release -A x64
+cmake --build . --config Release --parallel
 ```
 
 # Usage
 ```
 PhoneHelper.exe [--wireless/--usb] [--verbose (-v)]
 ```
+
+--wireless : chooses wireless connection over usb connection and tries to make a wireless connection if specified
+
+--usb : chooses USB connection over wireless connection

@@ -3,30 +3,20 @@
 #include <algorithm>
 #include <thread>
 void PhoneHelper::start(){
+    // Enable TCP/IP
+    system("adb tcpip 5555 >nul 2>nul");
+    std::this_thread::sleep_for(std::chrono::milliseconds(3000));
+
     // Look for a device
-    LOG_CLEAR();
-    int deviceCount = getDeviceCount();
-    //HACK : Disconnect everything if more than 2 connections
-    //because it causes conflicts
-    //TODO : Make a proper way to choose between already connected devices
-    while(deviceCount<=0){
+    std::vector<std::string> names = {};
+    int deviceCount = getDeviceCount(true,&names);
+
+    while(deviceCount<1){
         LOG_INFO("Connect a device and turn on USB Debugging\n");
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
         LOG_CLEAR();
         deviceCount = getDeviceCount();
     }
-    // Enable TCP/IP
-    system("adb tcpip 5555 >nul 2>nul");
-
-    // Delay until adb sets up tcpip
-    std::this_thread::sleep_for(std::chrono::milliseconds(3000));
-
-    // Find WLAN ip address
-    std::string ip = getIp();
-    connectToIP(ip);
-    
-    std::vector<std::string> names = {};
-    deviceCount = getDeviceCount(true,&names);
 
     int usbDeviceCount = 0;
     for(int i=0;i<deviceCount;i++){
@@ -56,6 +46,12 @@ void PhoneHelper::start(){
         options.scrcpyOptions.push_back(option);
     }
 
+    // Find WLAN ip address and connect to it if wireless is set
+    if(options.forceWireless){
+        std::string ip = getIp();
+        connectToIP(ip);
+    }
+
     //start scrcpy
     LOG_INFO("scrcpy started\n");
     startscrcpy();
@@ -79,7 +75,6 @@ void PhoneHelper::connectToIP(std::string& ip){
             return;
         }
         LOG_INFO("Successfully connected to "<<ip<<"\n");
-        LOG_INFO("You can now safely remove the USB\n");
     }
 }
 void PhoneHelper::startscrcpy(){
@@ -91,8 +86,15 @@ void PhoneHelper::startscrcpy(){
     }
     system(command.c_str());
 }
-std::string PhoneHelper::getIp(){
-    std::string ipline = runCommand("adb shell ip addr show wlan0 2>nul | find \"inet \"");
+std::string PhoneHelper::getIp(std::string serial){
+    std::string option;
+    if(serial == ""){
+        option = "-d";
+    }else{
+        option = "-s " + serial;
+    }
+
+    std::string ipline = runCommand("adb "+option+" shell ip addr show wlan0 2>nul | find \"inet \"");
     if(ipline.length() == 0 || (ipline.find("inet ") == std::string::npos)){
         return "";
     }
@@ -100,7 +102,6 @@ std::string PhoneHelper::getIp(){
     size_t ipstart = ipline.find("inet ") + 5;
     size_t ipend = ipline.find('/');
     std::string ip = ipline.substr(ipstart,(ipend - ipstart));
-    LOG_INFO("IP found:"<<ip<<"\n");
     
     return ip;
 }
