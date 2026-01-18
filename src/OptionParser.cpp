@@ -31,8 +31,6 @@ PhoneHelperOptions OptionParser::parse(const std::vector<std::string>& _options)
             options.scrcpyOptions.push_back("-e");
         }else if(options.forceUSB){
             options.scrcpyOptions.push_back("-d");
-        }else{
-            options.forceWireless = true; //HACK: enable forceWireless by default to fix multiple devices
         }
 
         return options;

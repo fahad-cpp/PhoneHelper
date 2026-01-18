@@ -11,7 +11,8 @@ class PhoneHelper{
     }
     std::string runCommand(const std::string& command);
     void start();
-    int getDeviceCount(bool silent = false);
+    int getDeviceCount(bool silent = false,std::vector<std::string>* names = nullptr);
+    void connectToIP(std::string& ip);
     void startscrcpy();
     std::string getIp();
 };
